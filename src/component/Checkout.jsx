@@ -1,11 +1,34 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-const Checkout = () => {
-  const [paymentId, setPaymentId] = useState('');
-  const [payerId, setPayerId] = useState('');
-  const [createUrl, setcreateUrl] = useState(''); // Thêm state để lưu URL
 
+const Checkout = () => {
+  const [createUrl, setCreateUrl] = useState('');
+  const styles = {
+    container: {
+      textAlign: 'center',
+      marginTop: '20px',
+    },
+    button: {
+      padding: '10px 20px',
+      fontSize: '16px',
+      backgroundColor: '#33FFFF',
+      color: 'white',
+      border: 'none',
+      borderRadius: '5px',
+      cursor: 'pointer',
+      transition: 'background-color 0.3s ease',
+    },
+    linkContainer: {
+      marginTop: '10px',
+    },
+    link: {
+      color: '#33CCFF',
+      textDecoration: 'none',
+    },
+    h1: {
+      color:'#33CCFF'
+    }
+  };
   const handleCreate = async () => {
     try {
       const response = await axios.post('http://localhost:5050/api/payment/create', {
@@ -15,51 +38,38 @@ const Checkout = () => {
         intent: 'sale',
         description: 'Test payment',
         redirectUrls: {
-          returnUrl: "http://localhost:5050/api/payment/execute",
-          cancelUrl: "http://localhost:5050/api/payment/cancel"
+          // The configuration path is automatically returned  
+          returnUrl: "http://localhost:3000", 
+          cancelUrl: "http://localhost:3000" 
         }
       });
 
-      // Lưu URL vào state
-      const url = response.data;
-      setcreateUrl(url);
+      //Save url at State
+      const url = response.data; 
+      setCreateUrl(url);
 
-      // Hiển thị URL
-      console.log('Approval URL:', url);
+      // Redirect to PayPal
+      window.location.href = url; 
+
     } catch (error) {
       console.error('Error creating payment:', error);
     }
   };
 
-  const handleExecutePayment = async () => {
-    if (!paymentId || !payerId) {
-      console.error('Payment ID or Payer ID is missing');
-      return;
-    }
-
-    try {
-      const response = await axios.get('http://localhost:5050/api/payment/execute', {
-        params: { paymentId, payerId }
-      });
-      console.log('Payment executed:', response.data);
-      navigate('/success'); // Redirect to success page
-    } catch (error) {
-      console.error('Error executing payment:', error);
-    }
-  };
-
   return (
-    <div>
-      <button onClick={handleCreate}>Pay with PayPal</button>
-      <button onClick={handleExecutePayment}>Excute</button>
-      {createUrl && (
-        <div>
-          <p>Click the link to complete your payment:</p>
-          <a href={createUrl} target="_blank" rel="noopener noreferrer">{createUrl}</a>
+    <div style={styles.container}>
+        <h1 style={styles.h1}>Vu Trung Nghia</h1>
+      <button style={styles.button} onClick={handleCreate}>Buy with PayPal</button>
+      {/* Show link */}
+      {createUrl && ( 
+        <div style={styles.linkContainer}> <p>Click the link to complete payment:</p>
+          <a href={createUrl} target="_blank" rel="noopener noreferrer" style={styles.link}>{createUrl}</a>
         </div>
       )}
     </div>
   );
 };
+
+
 
 export default Checkout;

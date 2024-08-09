@@ -7,10 +7,11 @@ function App() {
     <Router>
         <div>
           <Routes>
-             <Route></Route>
+             <Route path='/'></Route>
           </Routes>
         </div>
     </Router>
+    
   )
 }
 

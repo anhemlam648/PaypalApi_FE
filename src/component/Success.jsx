@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Success = () => {
-  const history = useHistory();
   const styles = {
     container: {
       display: 'flex',

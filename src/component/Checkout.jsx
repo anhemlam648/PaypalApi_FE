@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 const Checkout = () => {
   const [paymentId, setPaymentId] = useState('');
   const [payerId, setPayerId] = useState('');
@@ -31,29 +31,27 @@ const Checkout = () => {
     }
   };
 
-//   const handleExecutePayment = async () => {
-//     if (!paymentId || !payerId) {
-//       console.error('Payment ID or Payer ID is missing');
-//       return;
-//     }
+  const handleExecutePayment = async () => {
+    if (!paymentId || !payerId) {
+      console.error('Payment ID or Payer ID is missing');
+      return;
+    }
 
-//     try {
-//       const response = await axios.post('http://localhost:5050/api/payment/execute', null, {
-//         params: {
-//           paymentId,
-//           payerId
-//         }
-//       });
-//       console.log('Payment executed:', response.data);
-//       window.location.href = '/success'; // Redirect to success page
-//     } catch (error) {
-//       console.error('Error executing payment:', error);
-//     }
-//   };
+    try {
+      const response = await axios.get('http://localhost:5050/api/payment/execute', {
+        params: { paymentId, payerId }
+      });
+      console.log('Payment executed:', response.data);
+      navigate('/success'); // Redirect to success page
+    } catch (error) {
+      console.error('Error executing payment:', error);
+    }
+  };
 
   return (
     <div>
       <button onClick={handleCreate}>Pay with PayPal</button>
+      <button onClick={handleExecutePayment}>Excute</button>
       {createUrl && (
         <div>
           <p>Click the link to complete your payment:</p>
